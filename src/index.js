@@ -1,32 +1,71 @@
 import './index.css';
+import {initialCards} from './scripts/cards.js';
+import {createCard, removeCard, createNewPlace} from './scripts/card.js';
+import {openPopup, closePopup, closePopupEsc, closePopupOverlay, editProfile} from '../src/scripts/modal.js';
+
 
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
 // @todo: DOM узлы
-const card = cardTemplate.querySelector('.card');
-const cardList = document.querySelector('.places__list');
+export const card = cardTemplate.querySelector('.card');
+export const cardList = document.querySelector('.places__list');
 
-// @todo: Функция создания карточки
+export const popupEdit = document.querySelector('.popup_type_edit');
+export const popupNewCard = document.querySelector('.popup_type_new-card');
+export const popupImage = document.querySelector('.popup_type_image');
 
-function createCard(name, link, removeCard) {
-    const cardElement = card.cloneNode(true);
-    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
-    cardElement.querySelector('.card__title').textContent = name;
-    cardElement.querySelector('.card__image').src = link;
-    cardElement.querySelector('.card__image').alt = name;
-    cardDeleteButton.addEventListener('click', function(){removeCard(cardElement)});
-    return cardElement;
-  };
+export const profile = document.querySelector('.profile');
+const editButton = profile.querySelector('.profile__edit-button');
+const addButton = profile.querySelector('.profile__add-button');
 
-// @todo: Функция удаления карточки
 
-function removeCard(deletedCard) {
-  deletedCard.remove();
-}
+const formEdit = document.forms['edit-profile'];
+const nameEdit = formEdit.querySelector('.popup__input_type_name');
+const descriptionEdit = formEdit.querySelector('.popup__input_type_description');
+
+const formNewPlace = document.forms['new-place'];
+const placeName = formNewPlace.querySelector('.popup__input_type_card-name');
+const placeLink = formNewPlace.querySelector('.popup__input_type_url');
+
+
 
 // @todo: Вывести карточки на страницу
 
 initialCards.forEach(element => {
   cardList.append(createCard(element.name, element.link, removeCard));
+})
+
+
+// open popup +++++++++++++ 
+editButton.addEventListener('click', function(){ //edit
+  openPopup(popupEdit);
+  nameEdit.value = '';
+  descriptionEdit.value = '';
+});
+
+addButton.addEventListener('click', function(){ // newcard
+  openPopup(popupNewCard);
+  placeName.value = '';
+  placeLink.value = '';
+});
+
+
+
+// edit profile ++++++++++++++
+formEdit.addEventListener('submit', function(evt){
+  evt.preventDefault();
+  editProfile(nameEdit.value, descriptionEdit.value);
+  nameEdit.value = '';
+  descriptionEdit.value = '';
+  closePopup(popupEdit);
+})
+
+// add new place ++++++++++++++
+formNewPlace.addEventListener('submit', function(evt){
+  evt.preventDefault();
+  createNewPlace(placeName.value, placeLink.value);
+  placeName.value = '';
+  placeLink.value = '';
+  closePopup(popupNewCard);
 })
