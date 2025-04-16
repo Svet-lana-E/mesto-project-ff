@@ -1,5 +1,9 @@
-import {popupEdit, popupNewCard, popupImage, editButton, addButton, closeButtons, popups, profileDesctiption, profileTitle, profile} from "../index.js"; 
+import {popupImage, profileDesctiption, profileTitle} from "../index.js"; 
 
+//popup is animated
+export function animatePopup(popup){
+  popup.classList.add('popup_is-animated');
+}
 
 // popup open + add eventListeners +++++++++
 export function openPopup (popup) {
@@ -8,8 +12,8 @@ export function openPopup (popup) {
   popup.addEventListener('click', closePopupOverlay);
   const closeButton = popup.querySelector('.popup__close');
   closeButton.addEventListener('click', function(){
-    closePopup(popup)
-  })
+    closePopup(popup)}
+  );
 }
 
 // close  popup with Esc (не закрывает если введет какой л текст в форму)
@@ -39,12 +43,19 @@ export function closePopup(popup) {
 
 // edit profile in editForm ++++++++++++
 export function editProfile(title, description) {
-  const profileTitle = profile.querySelector('.profile__title');
-  const profileDesctiption = profile.querySelector('.profile__description');
   profileTitle.textContent = title;
   profileDesctiption.textContent = description;
+  return profileTitle.textContent, profileDesctiption.textContent;
 }
 
+// popup card
+
+export function popupCard(popupImageName, popupImageLink) {
+  openPopup(popupImage);
+  popupImage.querySelector('.popup__caption').textContent = popupImageName;
+  popupImage.querySelector('.popup__image').src = popupImageLink;
+  popupImage.querySelector('.popup__image').alt = popupImageName;
+} 
 
 
 
