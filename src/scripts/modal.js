@@ -31,7 +31,6 @@ function closeEscPopup(evt) {
 
 export function closeOverlayPopup(evt) {
   if (evt.target.classList.contains('popup_is-opened')){
-    const popup = document.querySelector('.popup_is-opened');
-    closePopup(popup);
+    closePopup(evt.target);
   }
 }

@@ -16,6 +16,7 @@ export const popupEdit = document.querySelector('.popup_type_edit');
 export const popupNewCard = document.querySelector('.popup_type_new-card');
 const popupImage = document.querySelector('.popup_type_image');
 const photoPopupImage = popupImage.querySelector('.popup__image');
+const namePopupImage = popupImage.querySelector('.popup__caption');
 const profile = document.querySelector('.profile');
 const buttonEditProfile = profile.querySelector('.profile__edit-button');
 const buttonAddNewPlace = profile.querySelector('.profile__add-button');
@@ -39,7 +40,7 @@ function editProfile(title, description) {
 // popup bigSize card
 
 export function openPopupCard(popupImageName, popupImageLink) {
-  popupImage.querySelector('.popup__caption').textContent = popupImageName;
+  namePopupImage.textContent = popupImageName;
   photoPopupImage.src = popupImageLink;
   photoPopupImage.alt = popupImageName;
   openPopup(popupImage);
