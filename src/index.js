@@ -2,6 +2,7 @@ import './index.css';
 import {initialCards} from './scripts/cards.js';
 import {createCard, removeCard, likeButtonIsActive} from './scripts/card.js';
 import {openPopup, closePopup, animatePopup, closeOverlayPopup} from '../src/scripts/modal.js';
+import {enableValidation, clearValidation} from './scripts/validation.js';
 
 // @todo: Темплейт карточки
 
@@ -28,6 +29,16 @@ const inputDescriptionEditProfile = formEditProfile.querySelector('.popup__input
 const formNewPlace = document.forms['new-place'];
 const inputNameFormNewPlace = formNewPlace.querySelector('.popup__input_type_card-name');
 const inputLinkFormNewPlace = formNewPlace.querySelector('.popup__input_type_url');
+
+// form validation config
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 // edit profile in editForm ++++++++++++
 
@@ -66,12 +77,14 @@ initialCards.forEach(element => {
 // open popup +++++++++++++ 
 
 buttonEditProfile.addEventListener('click', function(){ //edit
+  clearValidation(formEditProfile, validationConfig); 
   openPopup(popupEdit);
   inputNameFormEditProfile.value = profileTitle.textContent;
   inputDescriptionEditProfile.value = profileDesctiption.textContent;
 });
 
 buttonAddNewPlace.addEventListener('click', function(){ // newcard
+  clearValidation(formNewPlace, validationConfig);
   openPopup(popupNewCard);
   formNewPlace.reset();
 });
@@ -91,3 +104,11 @@ formNewPlace.addEventListener('submit', function(evt){
   cardList.prepend(createCard(inputNameFormNewPlace.value, inputLinkFormNewPlace.value, removeCard, likeButtonIsActive, openPopupCard));
   closePopup(popupNewCard);
 })
+
+// form validation
+
+enableValidation(validationConfig);
+
+// form validation mistake cleaning
+
+//clearValidation(formElement, validationConfig);
