@@ -1,22 +1,5 @@
-export const clearValidation = (formElement, config) => {
-  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
-  const buttonElement = formElement.querySelector(config.submitButtonSelector);
-  const errorElementList = Array.from(formElement.querySelectorAll(`.${config.errorClass}`));
-  inputList.forEach((element) => {
-    element.classList.remove(config.inputErrorClass);
-  });
-  errorElementList.forEach((errorElement) => {
-    console.log(errorElement);
-    errorElement.classList.remove(config.errorClass);
-    errorElement.textContent = '';
-  })
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
-}
-
-
-
 //show form validation error
+
 const showInputError = (formElement, element, config, errorMessage) => {
   const errorElement = formElement.querySelector(`.${element.id}-error`);
   element.classList.add(config.inputErrorClass);
@@ -63,7 +46,7 @@ const setEventListeners = (formElement, config) => {
   })
 }
 
-//form validaition initializing
+//form validation initializing
 
 export const enableValidation = (config) => {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
@@ -72,7 +55,7 @@ export const enableValidation = (config) => {
   })
 }
 
-//any invalid input cheking
+//any invalid input checking
 
 const hasInvalidInput =(inputList) => {
   return inputList.some((inputElement) => {
@@ -80,7 +63,7 @@ const hasInvalidInput =(inputList) => {
   })
 }
 
-// form button contition toggling
+// form button condition toggling
 
 const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
@@ -90,4 +73,22 @@ const toggleButtonState = (inputList, buttonElement, config) => {
     buttonElement.disabled = false;
     buttonElement.classList.remove(config.inactiveButtonClass);
   }
+}
+
+//form validation clearing
+
+export const clearValidation = (formElement, config) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+  const errorElementList = Array.from(formElement.querySelectorAll(`.${config.errorClass}`));
+  inputList.forEach((element) => {
+    element.classList.remove(config.inputErrorClass);
+  });
+  errorElementList.forEach((errorElement) => {
+    console.log(errorElement);
+    errorElement.classList.remove(config.errorClass);
+    errorElement.textContent = '';
+  })
+  buttonElement.disabled = true;
+  buttonElement.classList.add(config.inactiveButtonClass);
 }

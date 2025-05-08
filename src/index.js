@@ -1,8 +1,9 @@
 import './index.css';
-import {initialCards} from './scripts/cards.js';
+//import {initialCards} from './scripts/cards.js';
 import {createCard, removeCard, likeButtonIsActive} from './scripts/card.js';
 import {openPopup, closePopup, animatePopup, closeOverlayPopup} from '../src/scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
+import {getInitialCards, getUserData, editProfileApi, createNewCardApi} from './scripts/api.js';
 
 // @todo: Темплейт карточки
 
@@ -21,8 +22,9 @@ const namePopupImage = popupImage.querySelector('.popup__caption');
 const profile = document.querySelector('.profile');
 const buttonEditProfile = profile.querySelector('.profile__edit-button');
 const buttonAddNewPlace = profile.querySelector('.profile__add-button');
-const profileDesctiption = profile.querySelector('.profile__description');
+const profileDescription = profile.querySelector('.profile__description');
 const profileTitle = profile.querySelector('.profile__title');
+const profileImage = profile.querySelector('.profile__image');
 const formEditProfile = document.forms['edit-profile'];
 const inputNameFormEditProfile = formEditProfile.querySelector('.popup__input_type_name');
 const inputDescriptionEditProfile = formEditProfile.querySelector('.popup__input_type_description');
@@ -31,6 +33,7 @@ const inputNameFormNewPlace = formNewPlace.querySelector('.popup__input_type_car
 const inputLinkFormNewPlace = formNewPlace.querySelector('.popup__input_type_url');
 
 // form validation config
+
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -40,13 +43,29 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-// edit profile in editForm ++++++++++++
-
-function editProfile(title, description) {
-  profileTitle.textContent = title;
-  profileDesctiption.textContent = description;
-  return profileTitle.textContent, profileDesctiption.textContent;
+// fill-in profile
+const fillProfileData = (userData) => {
+  profileTitle.textContent = userData.name;
+  profileDescription.textContent = userData.about;
+  return profileTitle.textContent, profileDescription.textContent;
 }
+
+//getting initial card-list + user data API
+Promise.all([getInitialCards(), getUserData()])
+  .then(([initialCards, userData]) => {
+    initialCards.forEach((card) => {
+      cardList.append(createCard(card.name, card.link, card.likes, removeCard, likeButtonIsActive, openPopupCard));
+    });
+    fillProfileData(userData);
+    profileImage.style = `background-image: url(${userData.avatar})`;
+  })
+
+// edit profile in editForm (method without API)
+/*function editProfile(title, description) {
+  profileTitle.textContent = title;
+  profileDescription.textContent = description;
+  return profileTitle.textContent, profileDescription.textContent;
+}*/
 
 // popup bigSize card
 
@@ -68,11 +87,10 @@ popups.forEach(function(element) {
   );
 });
 
-// @todo: Вывести карточки на страницу
-
-initialCards.forEach(element => {
+// @todo: Вывести карточки на страницу (method without API)
+/*initialCards.forEach(element => {
   cardList.append(createCard(element.name, element.link, removeCard, likeButtonIsActive, openPopupCard));
-})
+})*/
 
 // open popup +++++++++++++ 
 
@@ -80,7 +98,7 @@ buttonEditProfile.addEventListener('click', function(){ //edit
   clearValidation(formEditProfile, validationConfig); 
   openPopup(popupEdit);
   inputNameFormEditProfile.value = profileTitle.textContent;
-  inputDescriptionEditProfile.value = profileDesctiption.textContent;
+  inputDescriptionEditProfile.value = profileDescription.textContent;
 });
 
 buttonAddNewPlace.addEventListener('click', function(){ // newcard
@@ -93,7 +111,8 @@ buttonAddNewPlace.addEventListener('click', function(){ // newcard
 
 formEditProfile.addEventListener('submit', function(evt){
   evt.preventDefault();
-  editProfile(inputNameFormEditProfile.value, inputDescriptionEditProfile.value);
+  editProfileApi(inputNameFormEditProfile.value, inputDescriptionEditProfile.value)
+    .then(fillProfileData);
   closePopup(popupEdit);
 })
 
@@ -101,14 +120,13 @@ formEditProfile.addEventListener('submit', function(evt){
 
 formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
-  cardList.prepend(createCard(inputNameFormNewPlace.value, inputLinkFormNewPlace.value, removeCard, likeButtonIsActive, openPopupCard));
+  createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value)
+    .then((card) => {
+      cardList.prepend(createCard(card.name, card.link, card.likes, removeCard, likeButtonIsActive, openPopupCard));
+    })
   closePopup(popupNewCard);
 })
 
 // form validation
 
 enableValidation(validationConfig);
-
-// form validation mistake cleaning
-
-//clearValidation(formElement, validationConfig);
