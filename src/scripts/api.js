@@ -64,3 +64,27 @@ export const createNewCardApi = (cardName, cardLink) => {
   .then(handleResponse)
   .catch(showResponseError)
 }
+
+/*export const handleLikes = (cardId, userId) => {
+  return fetch(configApi.baseUrl + '/cards', {
+    method: "PATCH",
+    headers: configApi.headers,
+    body: JSON.stringify({
+      likes: userId,
+    })
+  })
+  .then(handleResponse)
+  .catch(showResponseError)
+}*/
+
+// delete card
+
+export const deleteCardApi = (card) => {
+  return fetch(configApi.baseUrl + '/cards' + `/${card._id}`, {
+    method: "DELETE",
+    headers: configApi.headers,
+    })
+  //.then(handleResponse)
+  .then(handleResponse)
+  .catch(showResponseError)
+}

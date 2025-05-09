@@ -3,7 +3,7 @@ import './index.css';
 import {createCard, removeCard, likeButtonIsActive} from './scripts/card.js';
 import {openPopup, closePopup, animatePopup, closeOverlayPopup} from '../src/scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
-import {getInitialCards, getUserData, editProfileApi, createNewCardApi} from './scripts/api.js';
+import {getInitialCards, getUserData, editProfileApi, createNewCardApi, deleteCardApi} from './scripts/api.js';
 
 // @todo: Темплейт карточки
 
@@ -54,7 +54,7 @@ const fillProfileData = (userData) => {
 Promise.all([getInitialCards(), getUserData()])
   .then(([initialCards, userData]) => {
     initialCards.forEach((card) => {
-      cardList.append(createCard(card.name, card.link, card.likes, removeCard, likeButtonIsActive, openPopupCard));
+      cardList.append(createCard(card.name, card.link, card.likes, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
     });
     fillProfileData(userData);
     profileImage.style = `background-image: url(${userData.avatar})`;
@@ -120,9 +120,9 @@ formEditProfile.addEventListener('submit', function(evt){
 
 formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
-  createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value)
-    .then((card) => {
-      cardList.prepend(createCard(card.name, card.link, card.likes, removeCard, likeButtonIsActive, openPopupCard));
+  Promise.all([createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value), getUserData()])
+    .then(([card, userData]) => {
+      cardList.prepend(createCard(card.name, card.link, card.likes, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
     })
   closePopup(popupNewCard);
 })
