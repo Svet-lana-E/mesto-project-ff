@@ -65,26 +65,48 @@ export const createNewCardApi = (cardName, cardLink) => {
   .catch(showResponseError)
 }
 
-/*export const handleLikes = (cardId, userId) => {
-  return fetch(configApi.baseUrl + '/cards', {
-    method: "PATCH",
-    headers: configApi.headers,
-    body: JSON.stringify({
-      likes: userId,
-    })
-  })
-  .then(handleResponse)
-  .catch(showResponseError)
-}*/
-
 // delete card
 
 export const deleteCardApi = (card) => {
-  return fetch(configApi.baseUrl + '/cards' + `/${card._id}`, {
+  return fetch(configApi.baseUrl + '/cards/' + card.dataset.cardId, {
     method: "DELETE",
     headers: configApi.headers,
     })
-  //.then(handleResponse)
+  .then(handleResponse)
+  .catch(showResponseError)
+}
+
+// card like
+export const setLike = (card) => {
+  return fetch(configApi.baseUrl + '/cards/likes/' + card.dataset.cardId, {
+    method: "PUT",
+    headers: configApi.headers,
+  })
+  .then(handleResponse)
+  .catch(showResponseError)
+}
+
+// card dislike
+
+export const removeLike = (card) => {
+  return fetch(configApi.baseUrl + '/cards/likes/' + card.dataset.cardId, {
+    method: "DELETE",
+    headers: configApi.headers,
+  })
+  .then(handleResponse)
+  .catch(showResponseError)
+}
+
+// renew user avatar
+
+export const editUserImage = (avatarImageLink) => {
+  return fetch(configApi.baseUrl + '/users/me/avatar', {
+    method: "PATCH",
+    headers: configApi.headers,
+    body: JSON.stringify({
+      avatar: avatarImageLink,
+    })
+  })
   .then(handleResponse)
   .catch(showResponseError)
 }

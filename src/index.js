@@ -54,7 +54,7 @@ const fillProfileData = (userData) => {
 Promise.all([getInitialCards(), getUserData()])
   .then(([initialCards, userData]) => {
     initialCards.forEach((card) => {
-      cardList.append(createCard(card.name, card.link, card.likes, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
+      cardList.append(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
     });
     fillProfileData(userData);
     profileImage.style = `background-image: url(${userData.avatar})`;
@@ -99,12 +99,14 @@ buttonEditProfile.addEventListener('click', function(){ //edit
   openPopup(popupEdit);
   inputNameFormEditProfile.value = profileTitle.textContent;
   inputDescriptionEditProfile.value = profileDescription.textContent;
+  buttonEditProfile.blur();
 });
 
 buttonAddNewPlace.addEventListener('click', function(){ // newcard
   clearValidation(formNewPlace, validationConfig);
   openPopup(popupNewCard);
   formNewPlace.reset();
+  buttonAddNewPlace.blur();
 });
 
 // edit profile ++++++++++++++
@@ -122,7 +124,7 @@ formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
   Promise.all([createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value), getUserData()])
     .then(([card, userData]) => {
-      cardList.prepend(createCard(card.name, card.link, card.likes, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
+      cardList.prepend(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
     })
   closePopup(popupNewCard);
 })
