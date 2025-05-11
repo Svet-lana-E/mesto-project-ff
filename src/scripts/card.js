@@ -6,8 +6,8 @@ import {openPopup, closePopup} from './modal.js';
 
 export function createCard(name, link, number, cardId, cardOwnerId, userId, removeCard, likeButtonIsActive, openPopupCard) {
   const cardElement = card.cloneNode(true);
-  const cardDeleteButton = cardElement.querySelector('.card__delete-button');
-  const cardLikeButton = cardElement.querySelector('.card__like-button');
+  const buttonDeleteCard = cardElement.querySelector('.card__delete-button');
+  const buttonLikeCard = cardElement.querySelector('.card__like-button');
   const cardImage = cardElement.querySelector('.card__image');
   cardElement.querySelector('.card__title').textContent = name;
   cardElement.querySelector('.card__image').src = link;
@@ -15,13 +15,13 @@ export function createCard(name, link, number, cardId, cardOwnerId, userId, remo
   cardElement.querySelector('.card__like-counter').textContent = number.length;
   cardElement.dataset.cardId = cardId;
   if(cardOwnerId !== userId) {
-    cardDeleteButton.style = 'display: none';
+    buttonDeleteCard.style = 'display: none';
   }
   if(number.some(user => user._id === userId)) {
-    cardLikeButton.classList.add('card__like-button_is-active');
+    buttonLikeCard.classList.add('card__like-button_is-active');
   }
-  cardDeleteButton.addEventListener('click', function(){removeCard(cardElement)});
-  cardLikeButton.addEventListener('click', function(){likeButtonIsActive(cardLikeButton, cardElement)});
+  buttonDeleteCard.addEventListener('click', function(){removeCard(cardElement)});
+  buttonLikeCard.addEventListener('click', function(){likeButtonIsActive(buttonLikeCard, cardElement)});
   cardImage.addEventListener('click', function(){openPopupCard(name, link)});
   return cardElement;
 };
@@ -30,10 +30,10 @@ export function createCard(name, link, number, cardId, cardOwnerId, userId, remo
 
 export function removeCard(deletedCard) {
   const deleteConfirmPopup = document.querySelector('.popup_type_delete-confirm');
-  const deleteConfirmButton = deleteConfirmPopup.querySelector('.button');
+  const buttonConfirmDelete = deleteConfirmPopup.querySelector('.button');
   openPopup (deleteConfirmPopup);
   deletedCard.querySelector('.card__delete-button').blur(),
-  deleteConfirmButton.addEventListener('click', () => {
+  buttonConfirmDelete.addEventListener('click', () => {
     deleteCardApi(deletedCard)
     .then(
       deletedCard.remove(),

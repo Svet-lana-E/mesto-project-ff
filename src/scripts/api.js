@@ -97,14 +97,14 @@ export const removeLike = (card) => {
   .catch(showResponseError)
 }
 
-// renew user avatar
+// edit user avatar
 
-export const editUserImage = (avatarImageLink) => {
+export const editUserImage = (avatarLink) => {
   return fetch(configApi.baseUrl + '/users/me/avatar', {
     method: "PATCH",
     headers: configApi.headers,
     body: JSON.stringify({
-      avatar: avatarImageLink,
+      avatar: avatarLink,
     })
   })
   .then(handleResponse)

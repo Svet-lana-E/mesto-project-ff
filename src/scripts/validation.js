@@ -85,10 +85,10 @@ export const clearValidation = (formElement, config) => {
     element.classList.remove(config.inputErrorClass);
   });
   errorElementList.forEach((errorElement) => {
-    console.log(errorElement);
     errorElement.classList.remove(config.errorClass);
     errorElement.textContent = '';
   })
   buttonElement.disabled = true;
   buttonElement.classList.add(config.inactiveButtonClass);
+  buttonElement.textContent = 'Сохранить';
 }

@@ -1,9 +1,9 @@
 import './index.css';
 //import {initialCards} from './scripts/cards.js';
 import {createCard, removeCard, likeButtonIsActive} from './scripts/card.js';
-import {openPopup, closePopup, animatePopup, closeOverlayPopup} from '../src/scripts/modal.js';
+import {openPopup, closePopup, animatePopup, closeOverlayPopup, savingButtonInProcess} from '../src/scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
-import {getInitialCards, getUserData, editProfileApi, createNewCardApi, deleteCardApi} from './scripts/api.js';
+import {getInitialCards, getUserData, editProfileApi, createNewCardApi, editUserImage} from './scripts/api.js';
 
 // @todo: Темплейт карточки
 
@@ -17,6 +17,7 @@ const popups = document.querySelectorAll('.popup');
 export const popupEdit = document.querySelector('.popup_type_edit');
 export const popupNewCard = document.querySelector('.popup_type_new-card');
 const popupImage = document.querySelector('.popup_type_image');
+const popupEditProfileImage = document.querySelector('.popup_type_edit-avatar');
 const photoPopupImage = popupImage.querySelector('.popup__image');
 const namePopupImage = popupImage.querySelector('.popup__caption');
 const profile = document.querySelector('.profile');
@@ -25,7 +26,10 @@ const buttonAddNewPlace = profile.querySelector('.profile__add-button');
 const profileDescription = profile.querySelector('.profile__description');
 const profileTitle = profile.querySelector('.profile__title');
 const profileImage = profile.querySelector('.profile__image');
+const buttonEditProfileImage = profile.querySelector('.profile__edit-avatar');
 const formEditProfile = document.forms['edit-profile'];
+const formEditProfileAvatar = document.forms['edit-avatar'];
+const inputLinkFormEditProfileAvatar = formEditProfileAvatar.querySelector('.popup__input_type_avatar_link');
 const inputNameFormEditProfile = formEditProfile.querySelector('.popup__input_type_name');
 const inputDescriptionEditProfile = formEditProfile.querySelector('.popup__input_type_description');
 const formNewPlace = document.forms['new-place'];
@@ -109,26 +113,44 @@ buttonAddNewPlace.addEventListener('click', function(){ // newcard
   buttonAddNewPlace.blur();
 });
 
+buttonEditProfileImage.addEventListener('click', () => { // edit avatar
+  clearValidation(formEditProfileAvatar, validationConfig);
+  openPopup(popupEditProfileImage);
+  buttonEditProfileImage.blur();
+  inputLinkFormEditProfileAvatar.value = '';
+});
+
 // edit profile ++++++++++++++
 
 formEditProfile.addEventListener('submit', function(evt){
   evt.preventDefault();
+  savingButtonInProcess(formEditProfile) // остается надпись Сохранение...
   editProfileApi(inputNameFormEditProfile.value, inputDescriptionEditProfile.value)
-    .then(fillProfileData);
-  closePopup(popupEdit);
+    .then(fillProfileData)
+    .then(closePopup(popupEdit));
 })
 
 // add new place ++++++++++++++
 
 formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
+  savingButtonInProcess(formNewPlace)
   Promise.all([createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value), getUserData()])
     .then(([card, userData]) => {
       cardList.prepend(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
     })
-  closePopup(popupNewCard);
+    .then(closePopup(popupNewCard));
 })
 
 // form validation
 
 enableValidation(validationConfig);
+
+// edit user avatar
+
+formEditProfileAvatar.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  savingButtonInProcess(formEditProfileAvatar)
+  editUserImage(inputLinkFormEditProfileAvatar.value)
+    .then(closePopup(popupEditProfileImage));
+})
