@@ -51,13 +51,17 @@ export function likeButtonIsActive(likeButton, card) {
         card.querySelector('.card__like-counter').textContent = data.likes.length;
       })
       .then(
-        likeButton.classList.remove('card__like-button_is-active'))
+        likeButton.classList.remove('card__like-button_is-active'),
+        likeButton.blur()
+      )
   } else {
     setLike(card)
       .then((data) => {
         card.querySelector('.card__like-counter').textContent = data.likes.length;
       })
-      .then(likeButton.classList.add('card__like-button_is-active'))
+      .then(likeButton.classList.add('card__like-button_is-active'),
+      likeButton.blur()
+    )
   }
 } 
 
