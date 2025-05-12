@@ -90,5 +90,4 @@ export const clearValidation = (formElement, config) => {
   })
   buttonElement.disabled = true;
   buttonElement.classList.add(config.inactiveButtonClass);
-  buttonElement.textContent = 'Сохранить';
 }

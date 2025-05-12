@@ -15,7 +15,7 @@ const handleResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`); // если ошибка, отклоняем промис
 }
 
-const showResponseError = (err) => {
+export const showResponseError = (err) => {
   console.log(err); // выводим ошибку в консоль
 }
 
@@ -24,7 +24,6 @@ export const getInitialCards = () => {
     headers: configApi.headers,
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 export const getUserData = () => {
@@ -32,7 +31,6 @@ export const getUserData = () => {
     headers: configApi.headers,
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // edit profile
@@ -47,7 +45,6 @@ export const editProfileApi = (title, description) => {
     })
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // add new card
@@ -62,7 +59,6 @@ export const createNewCardApi = (cardName, cardLink) => {
     })
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // delete card
@@ -73,7 +69,6 @@ export const deleteCardApi = (card) => {
     headers: configApi.headers,
     })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // card like
@@ -83,7 +78,6 @@ export const setLike = (card) => {
     headers: configApi.headers,
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // card dislike
@@ -94,7 +88,6 @@ export const removeLike = (card) => {
     headers: configApi.headers,
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }
 
 // edit user avatar
@@ -108,5 +101,4 @@ export const editUserImage = (avatarLink) => {
     })
   })
   .then(handleResponse)
-  .catch(showResponseError)
 }

@@ -1,9 +1,9 @@
 import './index.css';
 //import {initialCards} from './scripts/cards.js';
-import {createCard, removeCard, likeButtonIsActive} from './scripts/card.js';
-import {openPopup, closePopup, animatePopup, closeOverlayPopup, savingButtonInProcess} from '../src/scripts/modal.js';
+import {createCard, likeButtonIsActive} from './scripts/card.js';
+import {openPopup, closePopup, animatePopup, closeOverlayPopup} from '../src/scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
-import {getInitialCards, getUserData, editProfileApi, createNewCardApi, editUserImage} from './scripts/api.js';
+import {showResponseError, getInitialCards, getUserData, editProfileApi, createNewCardApi, editUserImage, deleteCardApi} from './scripts/api.js';
 
 // @todo: Темплейт карточки
 
@@ -35,6 +35,10 @@ const inputDescriptionEditProfile = formEditProfile.querySelector('.popup__input
 const formNewPlace = document.forms['new-place'];
 const inputNameFormNewPlace = formNewPlace.querySelector('.popup__input_type_card-name');
 const inputLinkFormNewPlace = formNewPlace.querySelector('.popup__input_type_url');
+const deleteConfirmPopup = document.querySelector('.popup_type_delete-confirm');
+const buttonConfirmDelete = deleteConfirmPopup.querySelector('.button');
+let userId;
+let cardForDelete;
 
 // form validation config
 
@@ -51,18 +55,25 @@ const validationConfig = {
 const fillProfileData = (userData) => {
   profileTitle.textContent = userData.name;
   profileDescription.textContent = userData.about;
-  return profileTitle.textContent, profileDescription.textContent;
+}
+
+// saving process button
+
+const savingButtonInProcess = (formElement) => {
+  formElement.querySelector('.popup__button').textContent = 'Сохранение...'
 }
 
 //getting initial card-list + user data API
 Promise.all([getInitialCards(), getUserData()])
   .then(([initialCards, userData]) => {
+    userId = userData._id;
     initialCards.forEach((card) => {
-      cardList.append(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
+      cardList.append(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userId, likeButtonIsActive, openDeleteConfirmPopup, openPopupCard));
     });
     fillProfileData(userData);
     profileImage.style = `background-image: url(${userData.avatar})`;
   })
+  .catch(showResponseError);
 
 // edit profile in editForm (method without API)
 /*function editProfile(title, description) {
@@ -79,6 +90,20 @@ export function openPopupCard(popupImageName, popupImageLink) {
   photoPopupImage.alt = popupImageName;
   openPopup(popupImage);
 } 
+
+// open popup delete card
+export const openDeleteConfirmPopup = (currentCardElement) => {
+  openPopup(deleteConfirmPopup);
+  cardForDelete = currentCardElement;
+  buttonConfirmDelete.addEventListener('click', () => {
+    deleteCardApi(cardForDelete)
+    .then(() => {
+      cardForDelete.remove();
+      closePopup(deleteConfirmPopup);
+    })
+    .catch(showResponseError);
+  })
+}
 
 // popups animation
 
@@ -124,22 +149,27 @@ buttonEditProfileImage.addEventListener('click', () => { // edit avatar
 
 formEditProfile.addEventListener('submit', function(evt){
   evt.preventDefault();
-  savingButtonInProcess(formEditProfile) // остается надпись Сохранение...
+  savingButtonInProcess(formEditProfile);
   editProfileApi(inputNameFormEditProfile.value, inputDescriptionEditProfile.value)
-    .then(fillProfileData)
-    .then(closePopup(popupEdit));
+    .then((userData) => {fillProfileData(userData)})
+    .then(() => {closePopup(popupEdit)})
+    .catch(showResponseError)
+    .finally(() => {popupEdit.querySelector('.popup__button').textContent = 'Сохранить'})
+
 })
 
 // add new place ++++++++++++++
 
 formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
-  savingButtonInProcess(formNewPlace)
-  Promise.all([createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value), getUserData()])
-    .then(([card, userData]) => {
-      cardList.prepend(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userData._id, removeCard, likeButtonIsActive, openPopupCard));
+  savingButtonInProcess(formNewPlace);
+  createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value)
+    .then((card) => {
+      cardList.prepend(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userId, likeButtonIsActive, openDeleteConfirmPopup, openPopupCard));
     })
-    .then(closePopup(popupNewCard));
+    .then(() => {closePopup(popupNewCard)})
+    .catch(showResponseError)
+    .finally(() => {popupNewCard.querySelector('.popup__button').textContent = 'Сохранить'})
 })
 
 // form validation
@@ -150,7 +180,11 @@ enableValidation(validationConfig);
 
 formEditProfileAvatar.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  savingButtonInProcess(formEditProfileAvatar)
+  savingButtonInProcess(formEditProfileAvatar);
   editUserImage(inputLinkFormEditProfileAvatar.value)
-    .then(closePopup(popupEditProfileImage));
+    .then((userData) => {
+      profileImage.style = `background-image: url(${userData.avatar})`;
+      closePopup(popupEditProfileImage)})
+    .catch(showResponseError)
+    .finally(() => {popupEditProfileImage.querySelector('.popup__button').textContent = 'Сохранить'})
 })

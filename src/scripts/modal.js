@@ -34,10 +34,3 @@ export function closeOverlayPopup(evt) {
     closePopup(evt.target);
   }
 }
-
-// saving process button
-
-export const savingButtonInProcess = (formElement) => {
-  formElement.querySelector('.popup__button').textContent = 'Сохранение...'
-}
-
