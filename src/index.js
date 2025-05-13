@@ -59,8 +59,8 @@ const fillProfileData = (userData) => {
 
 // saving process button
 
-const savingButtonInProcess = (formElement) => {
-  formElement.querySelector('.popup__button').textContent = 'Сохранение...'
+const savingButtonInProcess = (formElement, text) => {
+  formElement.querySelector('.popup__button').textContent = text;
 }
 
 //getting initial card-list + user data API
@@ -95,7 +95,11 @@ export function openPopupCard(popupImageName, popupImageLink) {
 export const openDeleteConfirmPopup = (currentCardElement) => {
   openPopup(deleteConfirmPopup);
   cardForDelete = currentCardElement;
-  buttonConfirmDelete.addEventListener('click', () => {
+}
+
+// confirm delete card 
+
+buttonConfirmDelete.addEventListener('click', () => {
     deleteCardApi(cardForDelete)
     .then(() => {
       cardForDelete.remove();
@@ -103,7 +107,6 @@ export const openDeleteConfirmPopup = (currentCardElement) => {
     })
     .catch(showResponseError);
   })
-}
 
 // popups animation
 
@@ -149,27 +152,26 @@ buttonEditProfileImage.addEventListener('click', () => { // edit avatar
 
 formEditProfile.addEventListener('submit', function(evt){
   evt.preventDefault();
-  savingButtonInProcess(formEditProfile);
+  savingButtonInProcess(formEditProfile, 'Сохранение...');
   editProfileApi(inputNameFormEditProfile.value, inputDescriptionEditProfile.value)
     .then((userData) => {fillProfileData(userData)})
     .then(() => {closePopup(popupEdit)})
     .catch(showResponseError)
-    .finally(() => {popupEdit.querySelector('.popup__button').textContent = 'Сохранить'})
-
+    .finally(() => {savingButtonInProcess(formEditProfile, 'Сохранить')})
 })
 
 // add new place ++++++++++++++
 
 formNewPlace.addEventListener('submit', function(evt){
   evt.preventDefault();
-  savingButtonInProcess(formNewPlace);
+  savingButtonInProcess(formNewPlace, 'Сохранение...');
   createNewCardApi(inputNameFormNewPlace.value, inputLinkFormNewPlace.value)
     .then((card) => {
       cardList.prepend(createCard(card.name, card.link, card.likes, card._id, card.owner._id, userId, likeButtonIsActive, openDeleteConfirmPopup, openPopupCard));
     })
     .then(() => {closePopup(popupNewCard)})
     .catch(showResponseError)
-    .finally(() => {popupNewCard.querySelector('.popup__button').textContent = 'Сохранить'})
+    .finally(() => {savingButtonInProcess(formNewPlace, 'Сохранить')})
 })
 
 // form validation
@@ -180,11 +182,11 @@ enableValidation(validationConfig);
 
 formEditProfileAvatar.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  savingButtonInProcess(formEditProfileAvatar);
+  savingButtonInProcess(formEditProfileAvatar, 'Сохранение...');
   editUserImage(inputLinkFormEditProfileAvatar.value)
     .then((userData) => {
       profileImage.style = `background-image: url(${userData.avatar})`;
       closePopup(popupEditProfileImage)})
     .catch(showResponseError)
-    .finally(() => {popupEditProfileImage.querySelector('.popup__button').textContent = 'Сохранить'})
+    .finally(() => {savingButtonInProcess(formEditProfileAvatar, 'Сохранить')})
 })
